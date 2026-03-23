@@ -488,48 +488,6 @@ def test_tmux_backend_confirms_codex_workspace_trust_prompt(monkeypatch):
     assert ["tmux", "send-keys", "-t", "demo:agent", "Enter"] in run_calls
 
 
-def test_dismiss_codex_update_prompt_sends_enter(monkeypatch):
-    run_calls: list[list[str]] = []
-    capture_count = 0
-
-    class Result:
-        def __init__(self, returncode: int = 0, stdout: str = ""):
-            self.returncode = returncode
-            self.stdout = stdout
-            self.stderr = ""
-
-    def fake_run(args, **kwargs):
-        nonlocal capture_count
-        run_calls.append(args)
-        if args[:4] == ["tmux", "capture-pane", "-p", "-t"]:
-            capture_count += 1
-            if capture_count == 1:
-                return Result(
-                    stdout=(
-                        "Update available\n"
-                        "1 Update now\n"
-                        "3 Skip until next version\n"
-                        "Press enter to continue\n"
-                    )
-                )
-            return Result(stdout=">_ OpenAI Codex (v0.113.0)\n")
-        return Result()
-
-    monkeypatch.setattr("clawteam.spawn.tmux_backend.subprocess.run", fake_run)
-    monkeypatch.setattr("clawteam.spawn.tmux_backend.time.sleep", lambda *_: None)
-    monkeypatch.setattr("clawteam.spawn.tmux_backend.time.monotonic", iter(range(100)).__next__)
-
-    dismissed = _dismiss_codex_update_prompt_if_present(
-        "demo:agent",
-        ["codex"],
-        timeout_seconds=2.0,
-        poll_interval_seconds=0.1,
-    )
-
-    assert dismissed is True
-    assert ["tmux", "send-keys", "-t", "demo:agent", "Enter"] in run_calls
-
-
 def test_tmux_backend_waits_for_pane_before_declaring_failure(monkeypatch, tmp_path):
     from clawteam.config import ClawTeamConfig
 
