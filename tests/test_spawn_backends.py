@@ -190,7 +190,7 @@ def test_tmux_backend_exports_spawn_path_for_agent_commands(monkeypatch, tmp_pat
     full_cmd = new_session[-1]
     # Env vars are now written to a temp file and sourced, not inlined
     import re as _re
-    env_file_match = _re.search(r"\. '?(/tmp/clawteam-env-[^';\s]+\.env\.sh)'?", full_cmd)
+    env_file_match = _re.search(r"\. '?((?:/tmp|/var/tmp)/clawteam-env-[^';\s]+\.env\.sh)'?", full_cmd)
     assert env_file_match, f"env source command not found in: {full_cmd}"
     env_file_path = env_file_match.group(1)
     env_file_content = open(env_file_path).read()
