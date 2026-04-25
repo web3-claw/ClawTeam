@@ -9,7 +9,11 @@ from clawteam.spawn.adapters import NativeCliAdapter, is_claude_command, is_pi_c
 from clawteam.spawn.base import SpawnBackend
 from clawteam.spawn.cli_env import build_spawn_path, resolve_clawteam_executable
 from clawteam.spawn.command_validation import validate_spawn_command
-from clawteam.spawn.keepalive import build_keepalive_shell_command, build_resume_command
+from clawteam.spawn.keepalive import (
+    build_keepalive_resume_prompt,
+    build_keepalive_shell_command,
+    build_resume_command,
+)
 from clawteam.spawn.runtime_notification import render_runtime_notification
 from clawteam.team.mailbox import MailboxManager
 from clawteam.team.models import MessageType, get_data_dir
@@ -83,8 +87,12 @@ class SubprocessBackend(SpawnBackend):
         resume_base = build_resume_command(normalized_command)
         resume_command: list[str] = []
         if resume_base:
+            resume_prompt = None
+            if keepalive and is_claude_command(normalized_command):
+                resume_prompt = build_keepalive_resume_prompt(team_name, agent_name)
             resume_prepared = self._adapter.prepare_command(
                 resume_base,
+                prompt=resume_prompt,
                 cwd=cwd,
                 skip_permissions=skip_permissions,
                 agent_name=agent_name,
