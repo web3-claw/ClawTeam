@@ -364,16 +364,22 @@ Templates are TOML files — **create your own team archetypes** for any domain.
 ```bash
 pip install clawteam
 
+# Or install into an isolated user venv at ~/.clawteam/.venv
+scripts/install_clawteam.sh
+
 # Or from source
 git clone https://github.com/HKUDS/ClawTeam.git
 cd ClawTeam
 pip install -e .
 
+# Or install this checkout into ~/.clawteam/.venv
+scripts/clawteam_local_install
+
 # Optional: P2P transport (ZeroMQ)
 pip install -e ".[p2p]"
 ```
 
-Requires **Python 3.10+**, **tmux**, and a CLI coding agent (e.g. `claude`, `codex`). Python dependencies: `typer`, `pydantic`, `rich`.
+Requires **Python 3.10+**, **tmux**, and a CLI coding agent (e.g. `claude`, `codex`). The install scripts create/reuse `~/.clawteam/.venv` and link `~/.local/bin/clawteam`.
 
 All `spawn` examples assume the agent CLI you name is already installed and available on `PATH`.
 
