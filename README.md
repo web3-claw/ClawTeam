@@ -379,7 +379,9 @@ scripts/clawteam_local_install
 pip install -e ".[p2p]"
 ```
 
-Requires **Python 3.10+**, **tmux**, and a CLI coding agent (e.g. `claude`, `codex`). The install scripts create/reuse `~/.clawteam/.venv` and link `~/.local/bin/clawteam`.
+Requires **Python 3.10+**, **tmux**, and a CLI coding agent (e.g. `claude`, `codex`). The install scripts create/reuse `~/.clawteam/.venv`, link `~/.local/bin/clawteam`, and install/update the bundled `clawteam` skill for detected clients.
+
+Skill install targets are detected from existing config directories, including Claude Code, Codex, Gemini CLI, OpenClaw, OpenCode, Nanobot, Cursor, OpenHarness (`~/.openharness/skills`), and Ohmo (`~/.ohmo/skills`).
 
 All `spawn` examples assume the agent CLI you name is already installed and available on `PATH`.
 
